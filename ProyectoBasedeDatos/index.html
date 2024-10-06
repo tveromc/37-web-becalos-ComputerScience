@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Css/style.css">
+    <title>Gestión de Alumnos</title>
+   
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Alumnos</h1>
+        
+        <!-- Alta de Alumno -->
+        <section id="altaAlumno">
+            <h2>Alta de Alumno</h2>
+            <form id="formAltaAlumno">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" placeholder="Nombre" required>
+                <label for="apellidos">Apellidos</label>
+                <input type="text" id="apellidos" placeholder="Apellidos" required>
+                <label for="edad">Edad</label>
+                <input type="number" id="edad" placeholder="Edad" required min="1">
+                <button type="submit">Agregar Alumno</button>
+            </form>
+        </section>
+
+        <!-- Gestión de Clases -->
+       
+        <section id="gestionClases">
+            <h2>Gestión de Clases</h2>
+            <form id="formInscripcionClase">
+                <label for="alumnoInscripcion">Seleccionar Alumno</label>
+                <select id="alumnoInscripcion" required></select>
+                <label for="nombreClase">Nombre de la Clase</label>
+                <input type="text" id="nombreClase" placeholder="Nombre de la Clase" required>
+                <button type="submit">Inscribir a Clase</button>
+            </form>
+        </section>
+
+        <!-- Asignar Calificaciones -->
+        <section id="gestionCalificaciones">
+            <h2>Asignar Calificaciones</h2>
+            <form id="formAsignarCalificacion">
+                <label for="alumnoCalificacion">Seleccionar Alumno</label>
+                <select id="alumnoCalificacion" required></select>
+                <label for="claseCalificacion">Seleccionar Clase</label>
+                <select id="claseCalificacion" required></select>
+                <label for="calificacion">Calificación</label>
+                <input type="number" id="calificacion" placeholder="Calificación" required min="0" max="10" step="0.1">
+                <button type="submit">Asignar Calificación</button>
+            </form>
+        </section>
+
+        <!-- Gestión de Grupos -->
+        <section id="gestionGrupos">
+            <h2>Gestión de Grupos</h2>
+            <form id="formCrearGrupo">
+                <label for="nombreGrupo">Nombre del Grupo</label>
+                <input type="text" id="nombreGrupo" placeholder="Nombre del Grupo" required>
+                <button type="submit">Crear Grupo</button>
+            </form>
+            <form id="formAsignarGrupo">
+                <label for="alumnoGrupo">Seleccionar Alumno</label>
+                <select id="alumnoGrupo" required></select>
+                <label for="grupoAsignar">Seleccionar Grupo</label>
+                <select id="grupoAsignar" required></select>
+                <button type="submit">Asignar a Grupo</button>
+            </form>
+        </section>
+
+        <!-- Búsqueda de Alumnos -->
+        <section id="busqueda">
+            <h2>Búsqueda de Alumnos</h2>
+            <label for="busquedaAlumno">Buscar Alumno</label>
+            <input type="text" id="busquedaAlumno" placeholder="Buscar por nombre o apellido">
+            <button type="button" id="btnBuscar">Buscar</button>
+            <div id="resultadosBusqueda"></div>
+        </section>
+
+        <!-- Estadísticas -->
+        <section id="estadisticas">
+            <h2>Estadísticas</h2>
+            <button type="button" id="btnPromedioGrupo">Calcular Promedio del Grupo</button>
+            <button type="button" id="btnOrdenarCalificacion">Ordenar por Calificación</button>
+            <button type="button" id="btnOrdenarEdad">Ordenar por Edad (Extra)</button>
+            <div id="resultadosEstadisticas"></div>
+        </section>
+
+        <!-- Lista de Alumnos -->
+        <section id="listaAlumnos">
+            <h2>Lista de Alumnos</h2>
+            <table>
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Edad</th>
+                <th>Materia</th>
+                <th>Calificaciones</th>
+                <th>Promedio</th>
+            </tr>
+        
+        </thead>
+        <tbody id="tablaAlumnos">
+       
+            </table>
+            <ul id="listaAlumnosUl"></ul>
+        </section>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
+
