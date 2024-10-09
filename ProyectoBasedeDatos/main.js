@@ -1,147 +1,91 @@
-// Clase Alumno
+// Clase para representar un alumno
 class Alumno {
-    constructor(nombre, apellidos, edad) {
+    constructor(nombre, apellidos, edad, grupo) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.edad = edad;
-        this.materias = [];
-        this.calificaciones =  [];
-        this.grupo = '';
+        this.grupo = grupo;
+        this.materias = {
+            Ingles: null,
+            Español: null,
+            Historia: null,
+            Geografía: null,
+            Matemáticas: null
+        };
     }
 
-    inscribirMaterias(materia, calificaciones) {
-            this.materias.push(materia);
-            this.calificaciones .push(calificaciones);
-        }
-    
-    obtenerPromedio() {
-        
-        if (this.calificaciones.length === 0) return 0;
-        const total= this.calificaciones.reduce((acc,curr) => acc + curr, 0);
-        return (total / this.calificaciones.length).toFixed(2);
+    // Calcular promedio del alumno
+    calcularPromedio() {
+        const calificaciones = Object.values(this.materias).filter(cal => cal !== null);
+        if (calificaciones.length === 0) return 0;
+        const suma = calificaciones.reduce((a, b) => a + b, 0);
+        return (suma / calificaciones.length).toFixed(2);
     }
 }
 
+// Clase para gestionar la aplicación
 class GestionAlumnos {
     constructor() {
         this.alumnos = [];
-        this.grupos = [];
-        this.cargarDatos();
-        this.inicializarEventListeners();
-        this.actualizarListaAlumnos();
-    }
-    cargarDatos() {
-        
+        this.inicializarEventos();
     }
 
-    guardarDatos() {
-        
-    }
-       agregarAlumno(nombre, apellidos, edad) {
-        const alumno = new Alumno(nombre, apellidos, parseInt(edad));
-        this.alumnos.push(alumno);
-        this.guardarDatos();
-        this.actualizarListaAlumnos();
+    // Inicializa los event listeners de los formularios
+    inicializarEventos() {
+        document.getElementById('formAltaAlumno').addEventListener('submit', (e) => this.registrarAlumno(e));
+        document.getElementById('formInscripcionClase').addEventListener('submit', (e) => this.registrarCalificaciones(e));
+        document.getElementById('formAsignarCalificacion').addEventListener('submit', (e) => this.asignarCalificacion(e));
     }
 
-    inscribirAlumnoAClase(alumnoIndex, nombreClase) {
-        if (this.alumnos[alumnoIndex]) {
-            this.alumnos[alumnoIndex].inscribirMaterias(nombreClase); 
-            this.guardarDatos();
-            this.actualizarListaAlumnos();
-        }
-    }
+    // Registrar un nuevo alumno
+    registrarAlumno(event) {
+        event.preventDefault();
+        const nombre = document.getElementById('nombre').value;
+        const apellidos = document.getElementById('apellidos').value;
+        const edad = document.getElementById('edad').value;
+        const grupo = document.getElementById('grupo').value;
 
-    asignarCalificacion(alumnoIndex, materia, calificacion) {
-        if (this.alumnos[alumnoIndex]) {
-            this.alumnos[alumnoIndex].asignarCalificacion(materia, parseFloat(calificacion));
-            this.guardarDatos();
-            this.actualizarListaAlumnos();
-        }
-    }
-    
-    crearGrupo(nombreGrupo) {
-        if (!this.grupos.includes(nombreGrupo)) {
-            this.grupos.push(nombreGrupo);
-            this.guardarDatos();
-            this.actualizarSelectGrupos(); 
-        }
-    }
+        const nuevoAlumno = new Alumno(nombre, apellidos, edad, grupo);
+        this.alumnos.push(nuevoAlumno);
 
-    asignarAlumnoAGrupo(alumnoIndex, grupo) {
-        if (this.grupos.includes(grupo) && this.alumnos[alumnoIndex]) {
-            this.alumnos[alumnoIndex].grupo = grupo;
-            this.guardarDatos();
-            this.actualizarListaAlumnos();
-        }
-    }
-
-    buscarAlumnos(termino) {
-        return this.alumnos.filter(alumnos => 
-            a.nombre.toLowerCase().includes(termino.toLowerCase()) || 
-            a.apellidos.toLowerCase().includes(termino.toLowerCase())
-        );
-    }
-
-    obtenerPromedioGrupo(grupo) {
-        const alumnosGrupo = this.alumnos.filter(a => a.grupo === grupo);
-        if (alumnosGrupo.length === 0) return 0;
-        const promedio = alumnosGrupo.reduce((sum, a) => sum + parseFloat(a.obtenerPromedio()), 0) / alumnosGrupo.length;
-        return promedio.toFixed(2);
-    }
-
-    ordenarPorCalificacion(ascendente = true) {
-        return this.alumnos.slice().sort((a, b) => {
-            const promedioA = parseFloat(a.obtenerPromedio());
-            const promedioB = parseFloat(b.obtenerPromedio());
-            return ascendente ? promedioA - promedioB : promedioB - promedioA;
-        });
-    }
-
-    ordenarPorEdad(ascendente = true) {
-        return this.alumnos.sort((a, b) => ascendente ? a.edad - b.edad : b.edad - a.edad);
-    }
-
-    // Inicializa los eventos
-    inicializarEventListeners() {
-        const formAltaAlumno = document.getElementById('formAltaAlumno');
-        formAltaAlumno.addEventListener('submit', (e) => {
-            e.preventDefault(); // Evita el comportamiento por defecto del formulario
-            const nombre = document.getElementById('nombre').value;
-            const apellidos = document.getElementById('apellidos').value;
-            const edad = document.getElementById('edad').value;
-
-            this.agregarAlumno(nombre, apellidos, edad);
-
-            // Reinicia los campos del formulario
-            formAltaAlumno.reset();
-        });
-    }
-
-       actualizarSelectGrupos() {
-        const select = document.getElementById('grupoAsignar');
-        select.innerHTML = '';
-        this.grupos.forEach(grupo => {
-            const option = document.createElement('option');
-            option.value = grupo;
-            option.textContent = grupo;
-            select.appendChild(option);
-        });
-    }
-
-    actualizarListaAlumnos() {
-        const listaAlumnos = document.getElementById('listaAlumnosUl');
-        listaAlumnos.innerHTML = '';
-        this.alumnos.forEach(alumno => {
-            const li = document.createElement('li');
-            li.textContent = `${alumno.nombre} ${alumno.apellidos} - Edad: ${alumno.edad} - Grupo: ${alumno.grupo || 'No asignado'} - Promedio: ${alumno.obtenerPromedio()}`;
-            listaAlumnos.appendChild(li);
-        });
         this.actualizarSelectAlumnos();
+        this.actualizarTablaAlumnos();
+        event.target.reset();
     }
 
+    // Inscribir a un alumno en varias clases con calificaciones
+    registrarCalificaciones(event) {
+        event.preventDefault();
+        const alumnoIndex = document.getElementById('alumnoInscripcion').value;
+        const alumno = this.alumnos[alumnoIndex];
+        alumno.materias.Ingles = parseFloat(document.getElementById('Ingles').value);
+        alumno.materias.Español = parseFloat(document.getElementById('Español').value);
+        alumno.materias.Historia = parseFloat(document.getElementById('Historia').value);
+        alumno.materias.Geografía = parseFloat(document.getElementById('Geografía').value);
+        alumno.materias.Matemáticas = parseFloat(document.getElementById('Matemáticas').value);
+
+        this.actualizarTablaAlumnos();
+        event.target.reset();
+    }
+
+    // Asignar calificación a una materia de un alumno
+    asignarCalificacion(event) {
+        event.preventDefault();
+        const alumnoIndex = document.getElementById('alumnoCalificacion').value;
+        const materia = document.getElementById('claseCalificacion').value;
+        const calificacion = parseFloat(document.getElementById('calificacion').value);
+
+        if (this.alumnos[alumnoIndex]) {
+            this.alumnos[alumnoIndex].materias[materia] = calificacion;
+        }
+
+        this.actualizarTablaAlumnos();
+        event.target.reset();
+    }
+
+    // Actualizar el select de alumnos para las inscripciones y calificaciones
     actualizarSelectAlumnos() {
-        const selects = ['alumnoInscripcion', 'alumnoCalificacion', 'alumnoGrupo'];
+        const selects = ['alumnoInscripcion', 'alumnoCalificacion'];
         selects.forEach(selectId => {
             const select = document.getElementById(selectId);
             select.innerHTML = '';
@@ -153,7 +97,87 @@ class GestionAlumnos {
             });
         });
     }
+
+    // Actualizar la tabla de alumnos con sus datos
+    actualizarTablaAlumnos() {
+        const tabla = document.getElementById('tablaAlumnos').getElementsByTagName('tbody')[0];
+        tabla.innerHTML = ''; // Limpiar la tabla
+
+        this.alumnos.forEach(alumno => {
+            const fila = tabla.insertRow();
+            fila.insertCell(0).textContent = alumno.nombre;
+            fila.insertCell(1).textContent = alumno.apellidos;
+            fila.insertCell(2).textContent = alumno.edad;
+            fila.insertCell(3).textContent = alumno.grupo;
+
+            const materiasCalificadas = Object.entries(alumno.materias)
+                .map(([materia, calificacion]) => `${materia}: ${calificacion !== null ? calificacion : 'Sin calificación'}`)
+                .join(', ');
+
+            fila.insertCell(4).textContent = materiasCalificadas;
+            fila.insertCell(5).textContent = alumno.calcularPromedio();
+        });
+    }
+
+    // Ordenar la tabla de alumnos por promedio
+    ordenarTablaAlumnos(ascendente = true) {
+        this.alumnos.sort((a, b) => {
+            const promedioA = parseFloat(a.calcularPromedio());
+            const promedioB = parseFloat(b.calcularPromedio());
+            return ascendente ? promedioA - promedioB : promedioB - promedioA;
+        });
+
+        this.actualizarTablaAlumnos();
+    }
+
+    // Buscar un alumno por nombre, apellido o promedio
+    buscarAlumno() {
+        const termino = document.getElementById('buscar').value.toLowerCase();
+        const resultados = this.alumnos.filter(alumno =>
+            alumno.nombre.toLowerCase().includes(termino) ||
+            alumno.apellidos.toLowerCase().includes(termino) ||
+            alumno.calcularPromedio() === termino
+        );
+
+        const listaResultados = document.getElementById('listaAlumnosUl');
+        listaResultados.innerHTML = '';
+        resultados.forEach(alumno => {
+            const li = document.createElement('li');
+            li.textContent = `${alumno.nombre} ${alumno.apellidos} - Promedio: ${alumno.calcularPromedio()}`;
+            listaResultados.appendChild(li);
+        });
+    }
+
+    // Calcular y mostrar los promedios por grupo
+    calcularPromediosPorGrupo() {
+        const tablaPromedios = document.getElementById('tablaPromediosGrupo').getElementsByTagName('tbody')[0];
+        tablaPromedios.innerHTML = ''; // Limpiar la tabla de promedios
+
+        const grupos = {};
+        this.alumnos.forEach(alumno => {
+            if (!grupos[alumno.grupo]) grupos[alumno.grupo] = [];
+            grupos[alumno.grupo].push(parseFloat(alumno.calcularPromedio()));
+        });
+
+        for (const grupo in grupos) {
+            const promedios = grupos[grupo];
+            const promedioGrupo = (promedios.reduce((a, b) => a + b, 0) / promedios.length).toFixed(2);
+
+            const fila = tablaPromedios.insertRow();
+            fila.insertCell(0).textContent = grupo;
+            fila.insertCell(1).textContent = promedioGrupo;
+        }
+    }
 }
 
-// Inicializa la gestión de alumnos
+// Inicializa la aplicación
 const gestionAlumnos = new GestionAlumnos();
+
+// Funciones globales para ordenar y buscar
+function ordenarTablaAlumnos(ascendente) {
+    gestionAlumnos.ordenarTablaAlumnos(ascendente);
+}
+
+function buscarAlumno() {
+    gestionAlumnos.buscarAlumno();
+}
